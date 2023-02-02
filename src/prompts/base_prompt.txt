@@ -1,0 +1,8 @@
+I will provide you a codebase that I want you to understand. 
+
+The codebase directory will be represented as a dictionary, where each key is a file path in a repository, and each value is the file content.
+
+Key: file path to file name
+Value: file content
+
+I will feed you each file one by one. When you are ready, only reply "ready"

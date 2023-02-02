@@ -1,0 +1,8 @@
+Now you will generate markdown documentation for the codebase.
+
+Now you will return a directory of markdown files where the documentation will be. Please format your output documentation as a dictionary of markdown files. This dictionary should take the following form
+
+Key: file path to markdown file name, where the root of the file path is a "docs" directory
+Value: Markdown content.
+
+You will decide how the directory is structured, and the content of markdown files. Please focus on clarity and readability for developers.
