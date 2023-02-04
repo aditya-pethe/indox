@@ -41,11 +41,31 @@ This component will read repository code under the specified directory, and repr
 * Input: Repository directory path
 * Output: Text representation of code structure.
 
+
 Early Files & Modules 
 
 * **code_index.py** - given dir path, return the following:
   * A file subtree of the git repo under that directory
   * A dictionary of {filename:filecontent} of all code files under the tree
+
+#
+### Code Pruning
+
+There is a token limit of 2048 tokens per api call, so this component will break up the codebase into chunks that can be passed to the doc generator
+
+* Input: Dictionary {filename:filecontent} & High Level Repo Description(readme.md)
+* Output: A dict of {md filename: list of code filenames}
+
+This component is nuanced and difficult. It may require finetuning a model
+
+Steps:
+
+1. For each code file, generate a condensed summary, such that the dict {filename:summary} is within the prompt limit
+2. Using this dictionary, in addition to an intent generated from the readme, create a candidate set of essential code files for creating the docs. This can be done 2 ways:
+   1. Produce a dict {md filename: list of code filenames}
+   2. Produce a list of code filenames, and attempt to generate a single md doc in one shot. This is simpler, but may run into prompt constraints
+3. Pass the pruned candidate set to the document generator
+
 
 #
 ### Document Generator
