@@ -6,23 +6,16 @@
         "getting-started.md": {
             "description": "A guide on how to set up and start using the API."
         },
-        "endpoints": {
-            "endpoints.md": {
-                "description": "An overview of all the available API endpoints.",
-                "code_files":[]
-            }
-        },
-        "models": {
-            "models.md": {
-                "description": "Directory for documenting the data models used in the API",
-                "code_files":[]
-            }
-        },
+        "endpoints": [
+
+        ],
+        "models": [
+
+        ],
         "examples": {
             "examples.md": {
                 "description": "An example of how to using the API",
                 "code_files":[]
-
         }
     }
 }

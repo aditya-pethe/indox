@@ -1,3 +1,5 @@
+# Module for reading a github repository and returning a dict {filepath, filecontent}
+
 import requests
 import base64
 import urllib
@@ -62,5 +64,5 @@ def get_code_index(dir_url = "https://github.com/alexwohlbruck/cat-facts/tree/ma
     app_files = get_app_files(owner, repo, paths)
     return app_files
 
-res = get_code_index()
-print(res.keys())
+# res = get_code_index()
+# print(res.keys())

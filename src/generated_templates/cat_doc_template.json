@@ -1,0 +1,100 @@
+{
+    "docs": {
+        "overview.md": {
+            "description": "An introduction to the API and its features."
+        },
+        "getting-started.md": {
+            "description": "A guide on how to set up and start using the API."
+        },
+        "endpoints": [
+            {
+                "auth.routes.js.md": {
+                    "code_files": "app/routes/auth.routes.js"
+                }
+            },
+            {
+                "catbot.routes.js.md": {
+                    "code_files": "app/routes/catbot.routes.js"
+                }
+            },
+            {
+                "console.routes.js.md": {
+                    "code_files": "app/routes/console.routes.js"
+                }
+            },
+            {
+                "contact.routes.js.md": {
+                    "code_files": "app/routes/contact.routes.js"
+                }
+            },
+            {
+                "fact.routes.js.md": {
+                    "code_files": "app/routes/fact.routes.js"
+                }
+            },
+            {
+                "index.js.md": {
+                    "code_files": "app/routes/index.js"
+                }
+            },
+            {
+                "recipient.routes.js.md": {
+                    "code_files": "app/routes/recipient.routes.js"
+                }
+            },
+            {
+                "user.routes.js.md": {
+                    "code_files": "app/routes/user.routes.js"
+                }
+            },
+            {
+                "webhook.routes.js.md": {
+                    "code_files": "app/routes/webhook.routes.js"
+                }
+            }
+        ],
+        "models": [
+            {
+                "api-log.js.md": {
+                    "code_files": "app/models/api-log.js"
+                }
+            },
+            {
+                "fact.js.md": {
+                    "code_files": "app/models/fact.js"
+                }
+            },
+            {
+                "message.js.md": {
+                    "code_files": "app/models/message.js"
+                }
+            },
+            {
+                "recipient.js.md": {
+                    "code_files": "app/models/recipient.js"
+                }
+            },
+            {
+                "unsubscribe-date.js.md": {
+                    "code_files": "app/models/unsubscribe-date.js"
+                }
+            },
+            {
+                "user.js.md": {
+                    "code_files": "app/models/user.js"
+                }
+            },
+            {
+                "verification-code.js.md": {
+                    "code_files": "app/models/verification-code.js"
+                }
+            }
+        ],
+        "examples": {
+            "examples.md": {
+                "description": "An example of how to using the API",
+                "code_files": []
+            }
+        }
+    }
+}
