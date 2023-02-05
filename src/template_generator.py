@@ -46,16 +46,14 @@ def rule_based_classification(code_index):
 
         if "route" in filepath or "endpoint" in filepath:
             write_object["endpoints"].append({
-                f"{path_list[-1]}.md": {
-                "code_files":f"{filepath}"
-                }
+                "markdown_name" : f"{path_list[-1]}.md",
+                "code_name": f"{filepath}"
             })
 
         elif "model" in filepath:
             write_object["models"].append({
-                f"{path_list[-1]}.md": {
-                "code_files": f"{filepath}"
-                }
+                "markdown_name" : f"{path_list[-1]}.md",
+                "code_name": f"{filepath}"
             })
 
     return write_object
@@ -76,4 +74,3 @@ def generate_template(code_index, classification):
     write_object = classification(code_index)
     write_template(write_object)
     return
-

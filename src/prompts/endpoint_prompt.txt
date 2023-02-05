@@ -1,0 +1,25 @@
+Please write markdown docs for the endpoint(s) described in the following code. Format like so:
+
+# Endpoint_Category Endpoints
+
+## Endpoint1 Name
+
+```
+GET /endpoint1/path
+```
+Description:
+
+Query Parameters: 
+
+## Endpoint2 Name
+
+```
+GET /endpoint2/path
+```
+Description:
+
+Query Parameters: 
+
+Note that this markdown will be added to a larger endpoints.md file
+
+code:

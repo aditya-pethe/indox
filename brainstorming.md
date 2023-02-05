@@ -38,8 +38,8 @@ A completed project should meet the following requirements:
 
 This component will read repository code under the specified directory, and represent it to the LLM in a meaningful way.
 
-* Input: Repository directory path
-* Output: Text representation of code structure.
+* **Input**: Repository directory path
+* **Output**: Text representation of code structure.
 
 
 Early Files & Modules 
@@ -49,14 +49,34 @@ Early Files & Modules
   * A dictionary of {filename:filecontent} of all code files under the tree
 
 #
-### Code Pruning
+### Code Summarizer
 
-There is a token limit of 2048 tokens per api call, so this component will break up the codebase into chunks that can be passed to the doc generator
+Their needs to be a high level representation of the codebase that the LLM can understand in a single read, < 2048 tokens. This will be used for  code classification + template generation.
 
-* Input: Dictionary {filename:filecontent} & High Level Repo Description(readme.md)
-* Output: A dict of {md filename: list of code filenames}
+It will also be used to represent the dependency tree of the repo
 
-This component is nuanced and difficult. It may require finetuning a model
+* **Input**: 
+  * code_index, dict of {filename:filecontent}
+  * predefined documentation template / file structure:
+* **Output**: Populated documentation template with {md:code} mapping
+
+Steps:
+
+1. For each code file, generate a condensed summary, such that the dict {filename:summary} is within the prompt limit
+2. For each summary, ask for a list of imports which are also in the file tree
+3. Return both a) a dict of file summaries and b) a dependency tree
+
+#
+### Template Generation
+
+There is a token limit of 2048 tokens per api call, so this component will break up the codebase into chunks and arrange them into a template that can be passed to the doc generator
+
+* **Input**: 
+  * Summarization dict {filepath|filecontent} (from file summarizer) 
+  * predefined documentation template / file structure:
+* **Output**: Populated documentation template with {md:code} mapping
+
+This component is nuanced and difficult. It is made complicated by the fact that a single .md doc might require multiple code files to be generated. For example, an endpoint.md file requires the endpoint definition + model req/res definition. Thus, we need a file dependency tree - i.e imports - to be stored
 
 Steps:
 

@@ -10,32 +10,52 @@ from urllib.parse import urlparse
 import os
 from dotenv import load_dotenv 
 from code_indexer import get_code_index
+from utils import load_prompts
 import json
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+prompts = load_prompts()
 
-readme = ""
+def generate_docs(code_index):
 
-# with open("sample_repos/catfact_readme.md", "r") as file:
-#         # Read the contents of the file and decode the JSON data
-#         readme = file.read()
+    # generate the intro for the endpoints.md file
+    endpoint_header_prompt = f"""Write short intro for an endpoints.md file, supporting a cat facts api which provides daily cat facts"""
+    endpoint_header_completion = openai.Completion.create(
+                    model="text-davinci-003",
+                    prompt = endpoint_header_prompt,
+                    temperature = 0,
+                    max_tokens = 2048
+        )
 
-endpoint_header_prompt = f"""Using the given readme, please write the introduction to the endpoints.md file for documentation of this api
-                        no need to go in depth on specific endpoints, simply list endpoints of interest to the user. readme.md: {readme}"""
+    intro_md = "# Endpoints \n" + endpoint_header_completion.choices[0].text
 
-endpoint_prompt = """Please write markdown docs for the endpoint described in the following code. Include:
+    template = {}
 
-                    1. Description of what the endpoint does
-                    2. Example usage of the endpoint
+    # load the pre-defined doc template with {md:code} pairs 
+    with open("generated_templates/cat_doc_template.json", "r") as file:
+        template = json.load(file)
 
-                    Note that this markdown will be added to a larger endpoints.md file
-                  """
+    with open("generated_docs/generated_docs.md","w") as md:
+        md.write(intro_md)
+        for endpoint in template["docs"]["endpoints"]:
+            
+            # create markdown using endpoint prompt + endpoint code file
+            code_content = code_index[endpoint["code_name"]]
+            generate_prompt = prompts.endpoint_prompt + code_content
+            endpoint_completion = openai.Completion.create(
+                        model="text-davinci-003",
+                        prompt = generate_prompt,
+                        temperature = 0,
+                        max_tokens = 2048
+            )
+            md.write(endpoint_completion.choices[0].text)
 
-endpoint_header_completion = openai.Completion.create(
-                model="text-davinci-003",
-                prompt = endpoint_header_prompt,
-                temperature = 0,
-                max_tokens = 4096
-    )
+    return
+    
+    
+
+
+
+
 
 
