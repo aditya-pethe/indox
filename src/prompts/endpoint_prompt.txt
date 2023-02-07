@@ -11,6 +11,8 @@ Description:
 
 Query Parameters: 
 
+Example Reponse: 
+
 ## Endpoint2 Name
 
 ```
@@ -20,6 +22,6 @@ Description:
 
 Query Parameters: 
 
-Note that this markdown will be added to a larger endpoints.md file
+Example Response: 
 
 code:

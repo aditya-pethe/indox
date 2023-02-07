@@ -1,3 +1,4 @@
-Here is a file in the codebase. When you have recieved it, simply reply "next"
+The following is a data model for an api. your task is to write markdown documentation for data model. Format it as follows
 
-Again, it will be structured as a dictionary where the key is the file path, and the value is the file contents. 
+
+# 

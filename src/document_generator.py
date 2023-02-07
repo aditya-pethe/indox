@@ -16,6 +16,23 @@ import json
 openai.api_key = os.getenv("OPENAI_API_KEY")
 prompts = load_prompts()
 
+def write_endpoint_doc(endpoint_filename, model_filename):
+    code_index = {}
+    with open("cache/code_cache.json","r") as file:
+        code_index = json.load(file)["cached_index"]
+    
+    # create markdown using endpoint prompt + endpoint code file
+    endpoint_content = code_index[endpoint_filename]
+    model_content = code_index[model_filename]
+    generate_prompt = prompts["endpoint_prompt"] + endpoint_content + model_content
+    endpoint_completion = openai.Completion.create(
+                model="text-davinci-003",
+                prompt = generate_prompt,
+                temperature = 0,
+                max_tokens = 2048
+    )
+    return endpoint_completion.choices[0].text
+
 def generate_docs(code_index):
 
     # generate the intro for the endpoints.md file
@@ -53,7 +70,9 @@ def generate_docs(code_index):
     return
     
     
-
+endpoint_doc = write_endpoint_doc("app/routes/fact.routes.js", "app/models/fact.js")
+with open("generated_docs/endpoint_docs.md","w") as md:
+        md.write(endpoint_doc)
 
 
 

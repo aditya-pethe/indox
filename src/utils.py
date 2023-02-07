@@ -1,5 +1,7 @@
 import os
+import json
 from nltk.tokenize import word_tokenize
+import tiktoken
 
 def load_prompts():
 
@@ -14,10 +16,26 @@ def load_prompts():
 
     return prompts
 
+
 def num_tokens(data):
+
+    def num_tokens_from_string(string, encoding_name = "gpt2"):
+
+        encoding = tiktoken.get_encoding(encoding_name)
+        num_tokens = len(encoding.encode(string))
+        return num_tokens
+
     res = 0
     if type(data) != str:
-        res = word_tokenize("".join(data))
+        res = num_tokens_from_string("".join(data))
     else:
-        res = word_tokenize(data)
+        res = num_tokens_from_string(data)
     return res
+
+summary = {}
+n = 0
+
+with open("generated_summaries/summary.json","r") as file:
+    summary = json.load(file)
+    n = num_tokens(str(summary)) 
+    print(f"summary is {n} tokens")

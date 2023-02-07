@@ -7,7 +7,7 @@ import pandas as pd
 from urllib.parse import urlparse
 import os
 from dotenv import load_dotenv 
-from utils import num_tokens
+from utils import num_tokens, load_prompts
 import json
 
 
@@ -20,15 +20,31 @@ prompts = load_prompts()
 
 def summarize_code_index(code_index):
 
-    MAX_SUMMARY_TOKENS = 4096 - num_tokens(code_index.keys)
+    summary_dict = {}
 
     for filepath,file_content in code_index.items():
 
-        file_tokens = 
+        # TODO: average token length / file summary, but some files are more important than others - improve?
+        tokens_per_summary = int((3000 - num_tokens(code_index.keys())) / len(code_index.keys()))
 
-        endpoint_completion = openai.Completion.create(
+        summary_prompt = prompts["summary_prompt"] + f"""
+        file name: {filepath} 
+        file content: {file_content} 
+        file_dir:{code_index.keys()}
+        The "desc" field of the completion should be no longer than {tokens_per_summary} tokens"""
+
+        summary_completion = openai.Completion.create(
                         model="text-davinci-003",
-                        prompt = prompts.summary_prompt,
+                        prompt = summary_prompt,
                         temperature = 0,
-                        max_tokens = 2048
+                        max_tokens = tokens_per_summary
             )
+        
+        summary_dict[filepath] = summary_completion.choices[0].text
+
+    with open(f"generated_summaries/summary.json", "w") as file:
+        # Encode the data as a JSON string and write it to the file
+        json.dump(summary_dict, file)
+
+    return
+

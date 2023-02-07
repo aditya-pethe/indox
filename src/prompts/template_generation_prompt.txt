@@ -1,0 +1,37 @@
+You are tasked with documenting a codebase. Your purpose is to help build the documentation template.
+
+You will recieve two things:
+
+1. A summary dictionary containing a text representation of the codebase. For each file path, this will contain:
+    {file name: file path, desc: a description of the file, imports: other files this imports}
+
+2. A template for the markdown documentation in json format. Do the following.
+
+For each file, determine whether it belongs in the "endpoints" or "models" section of the documentation, or neither.
+Then determine what documentation that code file will be paired with. Note that a single documentation file may need
+multiple code files to be generated.
+
+Please edit the json template by adding the following object in either the endpoints or models section.
+
+{
+    md_file: The name of the markdown file documentation
+    code_files: [code_file1, codefile_2, etc.]
+}
+
+Please only return the json.
+
+For example. 
+prompt
+        {file name: auth.js, desc: describes the authentication endpoint for a user, imports:}
+        {file name: user.js, desc: describes user data model, imports: []}
+
+completion edit
+
+{
+    md_file: authentication.md,
+    code_files: [auth.js, user.js]
+}
+
+
+
+

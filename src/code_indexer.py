@@ -5,8 +5,23 @@ import base64
 import urllib
 from urllib.parse import urlparse
 import os
-from dotenv import load_dotenv
+import sys
+import json
+import logging
+import coloredlogs
 
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s]: %(message)s',
+    handlers=[logging.StreamHandler()]
+)
+
+logger = logging.getLogger()
+coloredlogs.install(level='DEBUG', logger=logger)
+
+
+from dotenv import load_dotenv
 load_dotenv()
 
 MY_AUTH = (os.getenv("GITHUB_USER"), os.getenv("GITHUB_PAT"))
@@ -59,10 +74,32 @@ def get_app_files(owner, repo, paths, branch='master'):
     return app_files
 
 def get_code_index(dir_url = "https://github.com/alexwohlbruck/cat-facts/tree/master/app"):
-    owner,repo,paths = parse_url(dir_url)
-    tree = get_tree(owner, repo, paths)
-    app_files = get_app_files(owner, repo, paths)
-    return app_files
+
+    logger.info("Beginning code indexing...")
+
+    cache = {}
+    
+    with open("cache/code_cache.json", "r") as file:
+        cache = json.load(file)
+
+    if dir_url == cache["cached_url"]:
+        logger.info("Url found in cache, using cached index...")
+        return cache["cached_index"]
+    else:
+        logger.info("Url not in cache, indexing repository...")
+        owner,repo,paths = parse_url(dir_url)
+        tree = get_tree(owner, repo, paths)
+        app_files = get_app_files(owner, repo, paths)
+
+        cache["cached_url"] = dir_url
+        cache["cached_index"] = app_files
+
+        with open(f"cache/code_cache.json", "w") as file:
+            cache["cached_url"] = dir_url
+            cache["cached_index"] = app_files
+            json.dump(cache, file)
+
+        return app_files
 
 # res = get_code_index()
 # print(res.keys())

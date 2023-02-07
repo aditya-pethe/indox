@@ -1,0 +1,127 @@
+{
+    "app/models/api-log.js": {
+        "description": "This file is app/models/api-log.js and it defines a Mongoose schema for an API log. It imports mongoose, mongoose-delete, mongoose-simple-random, and strings.js from the file_dir.",
+        "imports": []
+    },
+    "app/models/fact.js": {
+        "description": "This file is app/models/fact.js and it is responsible for creating a Mongoose schema for the Fact model. It also includes plugins for soft delete and random selection, as well as a static method for getting a fact based on certain parameters.",
+        "imports": []
+    },
+    "app/models/message.js": {
+        "description": "This file is app/models/message.js and it defines a Mongoose schema for a Message object. It also defines an index on the createdAt field that expires after two weeks.",
+        "imports": [
+            "app/models/api-log.js",
+            "app/models/fact.js",
+            "app/models/message.js",
+            "app/models/recipient.js",
+            "app/models/unsubscribe-date.js",
+            "app/models/user.js",
+            "app/models/verification-code.js"
+        ]
+    },
+    "app/models/recipient.js": {
+        "description": "This file is a model for the Recipient object. It defines the schema for the Recipient object, as well as a static method for adding recipients. It also includes validation and soft delete functionality.",
+        "imports": [
+            "app/models/user.js"
+        ]
+    },
+    "app/models/unsubscribe-date.js": {
+        "description": "This code file is a model for the UnsubscribeDate object in Mongoose. It defines the schema for the object and contains a static method to check if the current date is between two dates.",
+        "imports": [
+            "app/models/api-log.js",
+            "app/models/fact.js",
+            "app/models/message.js",
+            "app/models/recipient.js",
+            "app/models/unsubscribe-date.js",
+            "app/models/user.js",
+            "app/models/verification-code.js"
+        ]
+    },
+    "app/models/user.js": {
+        "description": "This file is the user model for the application. It defines the user schema and includes methods for encrypting and decrypting access tokens. It also includes a plugin for mongoose-delete and indexes for unique emails and phones.",
+        "imports": [
+            "app/models/fact",
+            "app/models/verification-code"
+        ]
+    },
+    "app/models/verification-code.js": {
+        "description": "This code file is a model for a VerificationCode object, which is used to verify a user's phone number. It requires the mongoose and shortid packages, and creates a schema with fields for code, user, type, and data. It also creates an index for the createdAt field with an expiration of 1 hour.",
+        "imports": [
+            "app/models/user.js"
+        ]
+    },
+    "app/routes/auth.routes.js": {
+        "description": "This file is the auth.routes.js file in the app/routes directory. It contains routes for authentication, including Google OAuth, signing out, and importing contacts. It also contains middleware for authentication.",
+        "imports": [
+            "app/models/user.js"
+        ]
+    },
+    "app/routes/catbot.routes.js": {
+        "description": "This code file is a router for the Catbot application. It contains routes for daily facts, messages, and authentication. It imports files from the 'app/models' and 'app/routes' directories of the file_dir codebase.",
+        "imports": [
+            "app/models/fact.js",
+            "app/models/message.js",
+            "app/models/recipient.js",
+            "app/models/fact.js",
+            "app/models/message.js",
+            "app/models/recipient.js"
+        ]
+    },
+    "app/routes/console.routes.js": {
+        "description": "This code file is a router for the console.routes.js file. It is used to get data from the Recipient, UnsubscribeDate, User, and Fact models and return it in a response object. It is protected by authentication and admin middleware.",
+        "imports": [
+            "app/models/recipient.js",
+            "app/models/unsubscribe-date.js",
+            "app/models/user.js",
+            "app/models/fact.js"
+        ]
+    },
+    "app/routes/contact.routes.js": {
+        "description": "This code file is a route for the contact page. It uses the Google People API to get a list of contacts from the user's Google account, and then filters out contacts without phone numbers. It then checks if the contacts are already added to the user's list of recipients, and returns the list of contacts with an added boolean.",
+        "imports": [
+            "app/models/recipient"
+        ]
+    },
+    "app/routes/fact.routes.js": {
+        "description": "This code file is a router for the Fact model. It contains routes for getting facts, getting submitted facts, getting a random fact, getting a fact by ID, and submitting a fact.",
+        "imports": [
+            "app/models/fact.js",
+            "app/models/user.js"
+        ]
+    },
+    "app/routes/index.js": {
+        "description": "This file is the main router for the application. It imports all the route groups from the file_dir and exports the router.",
+        "imports": [
+            "app/routes/auth.routes.js",
+            "app/routes/catbot.routes.js",
+            "app/routes/console.routes.js",
+            "app/routes/contact.routes.js",
+            "app/routes/fact.routes.js",
+            "app/routes/recipient.routes.js",
+            "app/routes/user.routes.js",
+            "app/routes/webhook.routes.js"
+        ]
+    },
+    "app/routes/recipient.routes.js": {
+        "description": "This file contains routes for the Recipient model. It includes routes for getting, adding, restoring, and deleting recipients, as well as getting a recipient's conversation.",
+        "imports": [
+            "app/models/recipient.js",
+            "app/models/message.js",
+            "app/models/verification-code.js"
+        ]
+    },
+    "app/routes/user.routes.js": {
+        "description": "This file is the user routes file, which contains the routes for user-related operations such as getting the user's information, deleting the user's account, verifying the user's phone number, and updating the user's phone number.",
+        "imports": [
+            "app/models/verification-code"
+        ]
+    },
+    "app/routes/webhook.routes.js": {
+        "description": "This code file is a webhook route for the api.ai service. It handles requests from api.ai and processes them accordingly, such as adding a recipient, getting a fact, or unsubscribing a recipient.",
+        "imports": [
+            "app/models/unsubscribe-date.js",
+            "app/models/recipient.js",
+            "app/models/fact.js"
+        ]
+    }
+}

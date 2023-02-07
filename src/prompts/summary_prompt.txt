@@ -1,0 +1,14 @@
+Please briefly summarize the following code file. Include:
+
+1. What it is and what it does, 
+2. A list of filepaths from the "file_dir" codebase that this file imports
+
+Format output as a json with the following:
+
+{
+    "description": "summary of the code file",
+    "imports":[path1,path2]
+}
+
+The imports list should have no newlines in them. The paths listed should also ONLY files that are in the "file_dir" list. 
+Do not include external packages, etc in the imports list

@@ -1,0 +1,15 @@
+{
+    "md_file": "endpoints.md",
+    "endpoint_list":[
+        {"endpoint_1":{
+            "name": "/daily",
+            "imports": ["app/models/fact.js", "app/models/message.js", "app/models/recipient.js"]
+        }
+    },
+        {"endpoint_2":{
+            "name": "/message",
+            "imports": ["app/models/message.js", "app/models/recipient.js"]
+        }
+    }
+    ]
+  }

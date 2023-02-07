@@ -1,5 +1,6 @@
 # Module for classfying code files into template structure using open ai api
 
+from importlib.resources import read_binary
 from webbrowser import get
 import requests
 import base64
@@ -10,25 +11,24 @@ from urllib.parse import urlparse
 import os
 from dotenv import load_dotenv 
 from code_indexer import get_code_index
+from utils import load_prompts, num_tokens
+
+
 import json
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+prompts = load_prompts()
+
 
 def write_template(write_obj, doc_template_path = "doc_templates/api_template.json", name = "cat_doc_template"):
 
-    # Open the file for reading
     with open(doc_template_path, "r") as file:
-        # Read the contents of the file and decode the JSON data
         template = json.load(file)
-
-    # Make the desired modifications to the data
     
     template["docs"]["models"] = write_obj["models"]
     template["docs"]["endpoints"] = write_obj["endpoints"]
 
-    # Open the file for writing
     with open(f"generated_templates/{name}.json", "w") as file:
-        # Encode the data as a JSON string and write it to the file
         json.dump(template, file)
 
     return 
@@ -64,6 +64,105 @@ def create_embeddings(code_index):
         "file_path":code_index.keys(),
         "file_content":code_index.values()
     })
+    return
+
+def parse_summary():
+    summary = {}
+    with open("generated_summaries/summary.json", "r") as file:
+        summary = json.load(file)
+
+    for filepath in summary:
+        path_data = summary[filepath]
+        json_data = {}
+        if type(path_data) == str:
+            json_data = json.loads(path_data)
+        else:
+            json_data = path_data
+
+        for imported_path in json_data["imports"]:
+            if imported_path not in summary:
+                json_data["imports"].remove(imported_path)
+
+        summary[filepath] = json_data
+
+    with open("generated_summaries/summary.json", "w") as file:
+        json.dump(summary, file)
+    
+    return
+
+def endpoint_indexer():
+    """
+    parses
+    """
+
+    code_index = {}
+    summary = {}
+    with open("generated_summaries/summary.json","r") as file:
+        summary = json.load(file)
+    with open("cache/code_cache.json","r") as file:
+        code_index = json.load(file)
+
+    code_name = "app/routes/catbot.routes.js"
+    code_imports = summary[code_name]["imports"]
+    import_desc = dict((path, summary[path]["description"]) for path in code_imports)
+    code_content = code_index["cached_index"][code_name]
+
+    endpoint_indexer_prompt = prompts["endpoint_indexer_prompt"]
+
+    complete_prompt = f"""
+    {endpoint_indexer_prompt} 
+    code content: {code_content}
+    import summaries: {import_desc}
+    """ 
+
+    capped_max = 4096 - num_tokens(complete_prompt)
+
+    endpoint_indexer_completion = openai.Completion.create(
+                        model="text-davinci-003",
+                        prompt = complete_prompt,
+                        temperature = 0,
+                        max_tokens = capped_max
+            ).choices[0].text
+
+    with open("generated_templates/endpoint_template.json","w") as file:
+        json.dump(endpoint_indexer_completion, file)
+
+    return
+
+
+def prompt_classfication():
+
+    """
+    input: template generation prompt + api doc template + file summary dict
+    output: a populated template, with file names in approriate positions in doc structure
+    """
+
+    template_generation_prompt = prompts["template_generation_prompt"]
+    summary = ""
+    doc_template = ""
+    with open("generated_summaries/summary.json","r") as file:
+        summary = str(json.load(file))
+
+    with open("doc_templates/api_template.json","r") as file:
+        doc_template = str(json.load(file))
+
+    complete_prompt = f"""
+    {template_generation_prompt} 
+    summary dictionary: {summary}
+    doc template: {doc_template}
+    """ 
+
+    capped_max = 4096 - num_tokens(complete_prompt)
+
+    template_completion = openai.Completion.create(
+                        model="text-davinci-003",
+                        prompt = complete_prompt,
+                        temperature = 0,
+                        max_tokens = capped_max
+            ).choices[0].text
+
+    with open("generated_templates/cat_doc_template.json","w") as file:
+        json.dump(template_completion, file)
 
     return
 
@@ -74,3 +173,7 @@ def generate_template(code_index, classification):
     write_object = classification(code_index)
     write_template(write_object)
     return
+
+# prompt_classfication()
+
+endpoint_indexer()
