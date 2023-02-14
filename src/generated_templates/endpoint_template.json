@@ -1,15 +1,45 @@
 {
-    "md_file": "endpoints.md",
-    "endpoint_list":[
-        {"endpoint_1":{
-            "name": "/daily",
-            "imports": ["app/models/fact.js", "app/models/message.js", "app/models/recipient.js"]
+    "md_file": "api_endpoints.md",
+    "endpoints": [
+        {
+            "name": "/",
+            "line_indices": {
+                "start_index": 8,
+                "end_index": 16
+            },
+            "response_model": "./app/models/fact"
+        },
+        {
+            "name": "/me",
+            "line_indices": {
+                "start_index": 18,
+                "end_index": 28
+            },
+            "response_model": "./app/models/fact"
+        },
+        {
+            "name": "/random",
+            "line_indices": {
+                "start_index": 30,
+                "end_index": 43
+            },
+            "response_model": "./app/models/fact"
+        },
+        {
+            "name": "/:factID",
+            "line_indices": {
+                "start_index": 45,
+                "end_index": 53
+            },
+            "response_model": "./app/models/fact"
+        },
+        {
+            "name": "/",
+            "line_indices": {
+                "start_index": 55,
+                "end_index": 68
+            },
+            "response_model": "./app/models/fact"
         }
-    },
-        {"endpoint_2":{
-            "name": "/message",
-            "imports": ["app/models/message.js", "app/models/recipient.js"]
-        }
-    }
     ]
-  }
+}

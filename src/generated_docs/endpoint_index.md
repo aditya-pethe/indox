@@ -1,0 +1,33 @@
+
+
+
+{
+    "md_file": "api_endpoints.md",
+    "endpoints":[
+        {
+            "name": "/",
+            "line_indices": {"start_index": 8, "end_index": 16}, 
+            "response_model": "./app/models/fact"
+        },
+        {
+            "name": "/me",
+            "line_indices": {"start_index": 18, "end_index": 28}, 
+            "response_model": "./app/models/fact"
+        },
+        {
+            "name": "/random",
+            "line_indices": {"start_index": 30, "end_index": 43}, 
+            "response_model": "./app/models/fact"
+        },
+        {
+            "name": "/:factID",
+            "line_indices": {"start_index": 45, "end_index": 54}, 
+            "response_model": "./app/models/fact"
+        },
+        {
+            "name": "/",
+            "line_indices": {"start_index": 56, "end_index": 68}, 
+            "response_model": "./app/models/fact"
+        }
+    ]
+}

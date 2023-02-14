@@ -27,11 +27,9 @@ load_dotenv()
 MY_AUTH = (os.getenv("GITHUB_USER"), os.getenv("GITHUB_PAT"))
 
 def parse_url(repo_url, paths = ["app/models","app/routes"]):
-
     """
-    give a repo url, and list of file paths
+    Given a repo url, give owner, repo, and list of paths,
     """
-    
     parts = urlparse(repo_url).path.split("/")
     owner = parts[1]
     repo = parts[2]
@@ -41,6 +39,9 @@ def parse_url(repo_url, paths = ["app/models","app/routes"]):
     return owner, repo, paths
 
 def get_tree(owner, repo, paths, branch='master'):
+    """
+    get the tree of the github repo
+    """
     response = requests.get(f'https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1', auth=MY_AUTH)
     if response.status_code == 200:
         repo_tree = response.json()
@@ -58,6 +59,9 @@ def get_tree(owner, repo, paths, branch='master'):
         return []
 
 def get_content(owner, repo, file_sha):
+    """
+    get the decoded content of a file 
+    """
     response = requests.get(f'https://api.github.com/repos/{owner}/{repo}/git/blobs/{file_sha}', auth=MY_AUTH)
     if response.status_code == 200:
         file_content = response.json()
@@ -66,6 +70,9 @@ def get_content(owner, repo, file_sha):
         return ''
 
 def get_app_files(owner, repo, paths, branch='master'):
+    """
+    get a dict {filepath, filecontent} of all the files in the repo
+    """
     app_files = {}
     app_tree = get_tree(owner, repo, paths, branch)
     for item in app_tree:
@@ -74,6 +81,10 @@ def get_app_files(owner, repo, paths, branch='master'):
     return app_files
 
 def get_code_index(dir_url = "https://github.com/alexwohlbruck/cat-facts/tree/master/app"):
+
+    """
+    Get the code index {filename, filecontent} given a directory url
+    """
 
     logger.info("Beginning code indexing...")
 

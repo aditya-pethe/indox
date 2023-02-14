@@ -17,11 +17,15 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 prompts = load_prompts()
 
 def write_endpoint_doc(endpoint_filename, model_filename):
+
+    """
+    Given an endpoint filename and a model filename, write the documentation to a file
+    """
+
     code_index = {}
     with open("cache/code_cache.json","r") as file:
         code_index = json.load(file)["cached_index"]
     
-    # create markdown using endpoint prompt + endpoint code file
     endpoint_content = code_index[endpoint_filename]
     model_content = code_index[model_filename]
     generate_prompt = prompts["endpoint_prompt"] + endpoint_content + model_content
@@ -34,6 +38,10 @@ def write_endpoint_doc(endpoint_filename, model_filename):
     return endpoint_completion.choices[0].text
 
 def generate_docs(code_index):
+
+    """
+    Generate documentation for all endpoints in the code index
+    """
 
     # generate the intro for the endpoints.md file
     endpoint_header_prompt = f"""Write short intro for an endpoints.md file, supporting a cat facts api which provides daily cat facts"""

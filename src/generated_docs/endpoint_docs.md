@@ -131,8 +131,7 @@ Example Response:
     "_id": "5f3f3f3f3f3f3f3f3f3f3f3f",
     "user": {
         "_id": "5f3f3f3f3f3f3f3f3f3f3f3f",
-        "name": "John Doe",
-        "photo": "https://example.com/photo.jpg"
+        "name": "John Doe"
     },
     "text": "Cats can be right-pawed or left-pawed.",
     "type": "cat",
@@ -150,7 +149,7 @@ Description: Submits a new fact to the database.
 
 Query Parameters: None
 
-Example Request: 
+Example Request Body: 
 ```
 {
     "factText": "Cats can be right-pawed or left-pawed.",

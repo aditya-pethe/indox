@@ -20,6 +20,19 @@ prompts = load_prompts()
 
 def summarize_code_index(code_index):
 
+    """
+    Given a code_index, summarize the code_index and return:
+    1. description of each file
+    2. A list of imports for each file
+    """
+    cached_summary = {}
+    with open("generated_summaries/summary.json","r") as file:
+        cached_summary = json.load(file);
+
+    # check if summary already exists for this codebase
+    if cached_summary.keys() == code_index.keys():
+        return
+
     summary_dict = {}
 
     for filepath,file_content in code_index.items():

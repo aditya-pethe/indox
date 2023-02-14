@@ -1,4 +1,6 @@
-# Module for classfying code files into template structure using open ai api
+# Module for classfying code files into template structure . The idea 
+# is to prep for document generation by populating the template with
+# the file names, so generation prompts can be as specific as possible.
 
 from importlib.resources import read_binary
 from webbrowser import get
@@ -22,10 +24,20 @@ prompts = load_prompts()
 
 def write_template(write_obj, doc_template_path = "doc_templates/api_template.json", name = "cat_doc_template"):
 
+    """
+    Given a write_obj with models and endpoints, this function will write the template to a json file
+    """
+
     with open(doc_template_path, "r") as file:
         template = json.load(file)
     
     template["docs"]["models"] = write_obj["models"]
+
+    # begin endpoint indexing
+    for endpoint in write_obj["endpoints"]:
+        filename = endpoint["codename"]
+        endpoint_index = 
+
     template["docs"]["endpoints"] = write_obj["endpoints"]
 
     with open(f"generated_templates/{name}.json", "w") as file:
@@ -34,6 +46,10 @@ def write_template(write_obj, doc_template_path = "doc_templates/api_template.js
     return 
 
 def rule_based_classification(code_index):
+
+    """
+    A simple rule-based classification function that uses filenames to classify the code
+    """
 
     write_object = {
             "models":[],
@@ -58,15 +74,12 @@ def rule_based_classification(code_index):
 
     return write_object
 
-def create_embeddings(code_index):
-
-    code_df = pd.DataFrame({
-        "file_path":code_index.keys(),
-        "file_content":code_index.values()
-    })
-    return
-
 def parse_summary():
+
+    """
+    opens the summary file and casts it to json, also cleans uneeded imports 
+    """
+
     summary = {}
     with open("generated_summaries/summary.json", "r") as file:
         summary = json.load(file)
@@ -90,29 +103,30 @@ def parse_summary():
     
     return
 
-def endpoint_indexer():
+def endpoint_indexer(code_name):
     """
-    parses
+    This attempts to create a template for all endpoints in a file, and relevant imports
     """
 
     code_index = {}
     summary = {}
+
     with open("generated_summaries/summary.json","r") as file:
         summary = json.load(file)
     with open("cache/code_cache.json","r") as file:
         code_index = json.load(file)
 
-    code_name = "app/routes/catbot.routes.js"
+    # get the file contents + imports for the given code file
     code_imports = summary[code_name]["imports"]
     import_desc = dict((path, summary[path]["description"]) for path in code_imports)
     code_content = code_index["cached_index"][code_name]
+
 
     endpoint_indexer_prompt = prompts["endpoint_indexer_prompt"]
 
     complete_prompt = f"""
     {endpoint_indexer_prompt} 
     code content: {code_content}
-    import summaries: {import_desc}
     """ 
 
     capped_max = 4096 - num_tokens(complete_prompt)
@@ -124,8 +138,10 @@ def endpoint_indexer():
                         max_tokens = capped_max
             ).choices[0].text
 
+    obj = json.loads(endpoint_indexer_completion)
+
     with open("generated_templates/endpoint_template.json","w") as file:
-        json.dump(endpoint_indexer_completion, file)
+        json.dump(obj, file)
 
     return
 
@@ -175,5 +191,5 @@ def generate_template(code_index, classification):
     return
 
 # prompt_classfication()
-
-endpoint_indexer()
+# filename = "app/routes/fact.routes.js"
+# endpoint_indexer(filename)
