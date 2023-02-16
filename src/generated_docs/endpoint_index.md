@@ -1,33 +1,34 @@
 
 
+json output:
 
 {
     "md_file": "api_endpoints.md",
     "endpoints":[
         {
-            "name": "/",
-            "line_indices": {"start_index": 8, "end_index": 16}, 
-            "response_model": "./app/models/fact"
+            "name": "GET /",
+            "line_indices": {"start_index":9, "end_index":37}, 
+            "response_model": "app/models/fact.js"
         },
         {
-            "name": "/me",
-            "line_indices": {"start_index": 18, "end_index": 28}, 
-            "response_model": "./app/models/fact"
+            "name": "GET /me",
+            "line_indices": {"start_index":39, "end_index":90}, 
+            "response_model": "app/models/fact.js"
         },
         {
-            "name": "/random",
-            "line_indices": {"start_index": 30, "end_index": 43}, 
-            "response_model": "./app/models/fact"
+            "name": "GET /random",
+            "line_indices": {"start_index":92, "end_index":145}, 
+            "response_model": "app/models/fact.js"
         },
         {
-            "name": "/:factID",
-            "line_indices": {"start_index": 45, "end_index": 54}, 
-            "response_model": "./app/models/fact"
+            "name": "GET /:factID",
+            "line_indices": {"start_index":147, "end_index":192}, 
+            "response_model": "app/models/fact.js"
         },
         {
-            "name": "/",
-            "line_indices": {"start_index": 56, "end_index": 68}, 
-            "response_model": "./app/models/fact"
+            "name": "POST /",
+            "line_indices": {"start_index":194, "end_index":258}, 
+            "response_model": "app/models/fact.js"
         }
     ]
 }

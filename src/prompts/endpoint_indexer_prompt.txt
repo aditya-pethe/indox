@@ -5,11 +5,11 @@ a markdown file which documents these endpoints
 1. Name the markdown file - be specific
 2. Parse the file into a list of endpoints
 3. For each endpoint, do the following:
-    - name the endpoint
+    - name the endpoint md file. For example, if the endpoints concern user authentication, this can be "authentication.md"
     - Give the string indices this code is in between within the file.
-        - start_index: line where endpoint is first defined
-        - end_index: last line defining endpoint behavior & returning response
-    - Give the filepath to the data model this endpoint uses in its response
+        - start_index: line where endpoint is first defined - contains ".get("
+        - end_index: last line defining endpoint behavior - contains closing ")"
+    - Give the root filepath to the data model this endpoint uses in its response
 
 json output format: return ONLY the json object
 
@@ -19,7 +19,7 @@ json output format: return ONLY the json object
         {
             "name": "endpoint name",
             "line_indices": {"start_index":int, "end_index"int}, 
-            "response_model": "data_model file name"
+            "response_model": "data_model filepath from root"
         }
         ...
     ]

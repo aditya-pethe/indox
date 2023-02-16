@@ -8,53 +8,247 @@
         },
         "endpoints": [
             {
-                "code_name": "app/routes/auth.routes.js"
+                "markdown_name": "auth.routes.js.md",
+                "code_name": "app/routes/auth.routes.js",
+                "endpoint_index": [
+                    {
+                        "line_indices": {
+                            "start_index": 28,
+                            "end_index": 45
+                        },
+                        "response_model": ""
+                    },
+                    {
+                        "line_indices": {
+                            "start_index": 47,
+                            "end_index": 71
+                        },
+                        "response_model": "app/models/user.js"
+                    },
+                    {
+                        "line_indices": {
+                            "start_index": 73,
+                            "end_index": 76
+                        },
+                        "response_model": "app/models/user.js"
+                    }
+                ]
             },
             {
-                "code_name": "app/routes/catbot.routes.js"
+                "markdown_name": "catbot.routes.js.md",
+                "code_name": "app/routes/catbot.routes.js",
+                "endpoint_index": [
+                    {
+                        "line_indices": {
+                            "start_index": 22,
+                            "end_index": 118
+                        },
+                        "response_model": "app/models/fact.js"
+                    },
+                    {
+                        "line_indices": {
+                            "start_index": 121,
+                            "end_index": 215
+                        },
+                        "response_model": "app/models/fact.js"
+                    }
+                ]
             },
             {
-                "code_name": "app/routes/console.routes.js"
+                "markdown_name": "console.routes.js.md",
+                "code_name": "app/routes/console.routes.js",
+                "endpoint_index": [
+                    {
+                        "line_indices": {
+                            "start_index": 11,
+                            "end_index": 32
+                        },
+                        "response_model": "app/models/recipient.js"
+                    }
+                ]
             },
             {
-                "code_name": "app/routes/contact.routes.js"
+                "markdown_name": "contact.routes.js.md",
+                "code_name": "app/routes/contact.routes.js",
+                "endpoint_index": [
+                    {
+                        "line_indices": {
+                            "start_index": 11,
+                            "end_index": 65
+                        },
+                        "response_model": ""
+                    }
+                ]
             },
             {
-                "code_name": "app/routes/fact.routes.js"
+                "markdown_name": "fact.routes.js.md",
+                "code_name": "app/routes/fact.routes.js",
+                "endpoint_index": [
+                    {
+                        "line_indices": {
+                            "start_index": 9,
+                            "end_index": 16
+                        },
+                        "response_model": "app/models/fact.js"
+                    },
+                    {
+                        "line_indices": {
+                            "start_index": 19,
+                            "end_index": 36
+                        },
+                        "response_model": "app/models/fact.js"
+                    },
+                    {
+                        "line_indices": {
+                            "start_index": 39,
+                            "end_index": 54
+                        },
+                        "response_model": "app/models/fact.js"
+                    },
+                    {
+                        "line_indices": {
+                            "start_index": 57,
+                            "end_index": 69
+                        },
+                        "response_model": "app/models/fact.js"
+                    },
+                    {
+                        "line_indices": {
+                            "start_index": 72,
+                            "end_index": 109
+                        },
+                        "response_model": "app/models/fact.js"
+                    }
+                ]
             },
             {
-                "code_name": "app/routes/index.js"
+                "markdown_name": "index.js.md",
+                "code_name": "app/routes/index.js",
+                "endpoint_index": []
             },
             {
-                "code_name": "app/routes/recipient.routes.js"
+                "markdown_name": "recipient.routes.js.md",
+                "code_name": "app/routes/recipient.routes.js",
+                "endpoint_index": [
+                    {
+                        "line_indices": {
+                            "start_index": 13,
+                            "end_index": 31
+                        },
+                        "response_model": "app/models/recipient.js"
+                    },
+                    {
+                        "line_indices": {
+                            "start_index": 34,
+                            "end_index": 53
+                        },
+                        "response_model": "app/models/verification-code.js"
+                    },
+                    {
+                        "line_indices": {
+                            "start_index": 56,
+                            "end_index": 98
+                        },
+                        "response_model": "app/models/verification-code.js"
+                    },
+                    {
+                        "line_indices": {
+                            "start_index": 145,
+                            "end_index": 171
+                        },
+                        "response_model": "app/models/verification-code.js"
+                    },
+                    {
+                        "line_indices": {
+                            "start_index": 174,
+                            "end_index": 192
+                        },
+                        "response_model": "app/models/verification-code.js"
+                    },
+                    {
+                        "line_indices": {
+                            "start_index": 195,
+                            "end_index": 211
+                        },
+                        "response_model": "app/models/verification-code.js"
+                    }
+                ]
             },
             {
-                "code_name": "app/routes/user.routes.js"
+                "markdown_name": "user.routes.js.md",
+                "code_name": "app/routes/user.routes.js",
+                "endpoint_index": [
+                    {
+                        "line_indices": {
+                            "start_index": 10,
+                            "end_index": 12
+                        },
+                        "response_model": "app/models/verification-code"
+                    },
+                    {
+                        "line_indices": {
+                            "start_index": 14,
+                            "end_index": 29
+                        },
+                        "response_model": "app/models/verification-code"
+                    },
+                    {
+                        "line_indices": {
+                            "start_index": 31,
+                            "end_index": 56
+                        },
+                        "response_model": "app/models/verification-code"
+                    },
+                    {
+                        "line_indices": {
+                            "start_index": 58,
+                            "end_index": 84
+                        },
+                        "response_model": "app/models/verification-code"
+                    }
+                ]
             },
             {
-                "code_name": "app/routes/webhook.routes.js"
+                "markdown_name": "webhook.routes.js.md",
+                "code_name": "app/routes/webhook.routes.js",
+                "endpoint_index": [
+                    {
+                        "line_indices": {
+                            "start_index": 83,
+                            "end_index": 102
+                        },
+                        "response_model": "app/models/fact.js"
+                    }
+                ]
             }
         ],
         "models": [
             {
+                "markdown_name": "api-log.js.md",
                 "code_name": "app/models/api-log.js"
             },
             {
+                "markdown_name": "fact.js.md",
                 "code_name": "app/models/fact.js"
             },
             {
+                "markdown_name": "message.js.md",
                 "code_name": "app/models/message.js"
             },
             {
+                "markdown_name": "recipient.js.md",
                 "code_name": "app/models/recipient.js"
             },
             {
+                "markdown_name": "unsubscribe-date.js.md",
                 "code_name": "app/models/unsubscribe-date.js"
             },
             {
+                "markdown_name": "user.js.md",
                 "code_name": "app/models/user.js"
             },
             {
+                "markdown_name": "verification-code.js.md",
                 "code_name": "app/models/verification-code.js"
             }
         ],

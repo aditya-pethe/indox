@@ -1,0 +1,44 @@
+
+1. Introduction.md
+    - Description: This file will provide an introduction to the codebase, including a high level overview of the application and its purpose.
+    - Code Files: None
+
+2. Models.md
+    - Description: This file will provide an overview of the models used in the codebase, including a description of each model and its purpose.
+    - Code Files: app/models/api-log.js, app/models/fact.js, app/models/message.js, app/models/recipient.js, app/models/unsubscribe-date.js, app/models/user.js, app/models/verification-code.js
+
+3. Routes.md
+    - Description: This file will provide an overview of the routes used in the codebase, including a description of each route and its purpose.
+    - Code Files: app/routes/auth.routes.js, app/routes/catbot.routes.js, app/routes/console.routes.js, app/routes/contact.routes.js, app/routes/fact.routes.js, app/routes/index.js, app/routes/recipient.routes.js, app/routes/user.routes.js, app/routes/webhook.routes.js
+
+4. Authentication.md
+    - Description: This file will provide an overview of the authentication process used in the codebase, including a description of the authentication middleware and the Google OAuth process.
+    - Code Files: app/routes/auth.routes.js
+
+5. Catbot.md
+    - Description: This file will provide an overview of the Catbot application, including a description of the daily facts, messages, and authentication routes.
+    - Code Files: app/routes/catbot.routes.js
+
+6. Console.md
+    - Description: This file will provide an overview of the console routes, including a description of the data that is returned and the authentication and admin middleware used.
+    - Code Files: app/routes/console.routes.js
+
+7. Contact.md
+    - Description: This file will provide an overview of the contact page, including a description of the Google People API and the filtering process used to get contacts with phone numbers.
+    - Code Files: app/routes/contact.routes.js
+
+8. Fact.md
+    - Description: This file will provide an overview of the Fact model, including a description of the routes used to get facts, submit facts, and get a random fact.
+    - Code Files: app/routes/fact.routes.js
+
+9. Recipient.md
+    - Description: This file will provide an overview of the Recipient model, including a description of the routes used to get, add, restore, and delete recipients, as well as get a recipient's conversation.
+    - Code Files: app/routes/recipient.routes.js
+
+10. User.md
+    - Description: This file will provide an overview of the user routes, including a description of the routes used to get the user's information, delete the user's account, verify the user's phone number, and update the user's phone number.
+    - Code Files: app/routes/user.routes.js
+
+11. Webhook.md
+    - Description: This file will provide an overview of the webhook route for the api.ai service, including a description of the requests it handles and the operations it performs.
+    - Code Files: app/routes/webhook.routes.js

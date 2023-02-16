@@ -14,7 +14,7 @@ import os
 from dotenv import load_dotenv 
 from code_indexer import get_code_index
 from utils import load_prompts, num_tokens
-
+from endpoint_parser import match_endpoint, get_import_headers
 
 import json
 
@@ -34,9 +34,10 @@ def write_template(write_obj, doc_template_path = "doc_templates/api_template.js
     template["docs"]["models"] = write_obj["models"]
 
     # begin endpoint indexing
-    for endpoint in write_obj["endpoints"]:
-        filename = endpoint["codename"]
-        endpoint_index = 
+    for i,endpoint in enumerate(write_obj["endpoints"]):
+        filename = endpoint["code_name"]
+        endpoint_index = endpoint_indexer(filename)
+        write_obj["endpoints"][i]["endpoint_index"] = endpoint_index
 
     template["docs"]["endpoints"] = write_obj["endpoints"]
 
@@ -74,77 +75,70 @@ def rule_based_classification(code_index):
 
     return write_object
 
-def parse_summary():
-
-    """
-    opens the summary file and casts it to json, also cleans uneeded imports 
-    """
-
-    summary = {}
-    with open("generated_summaries/summary.json", "r") as file:
-        summary = json.load(file)
-
-    for filepath in summary:
-        path_data = summary[filepath]
-        json_data = {}
-        if type(path_data) == str:
-            json_data = json.loads(path_data)
-        else:
-            json_data = path_data
-
-        for imported_path in json_data["imports"]:
-            if imported_path not in summary:
-                json_data["imports"].remove(imported_path)
-
-        summary[filepath] = json_data
-
-    with open("generated_summaries/summary.json", "w") as file:
-        json.dump(summary, file)
-    
-    return
-
-def endpoint_indexer(code_name):
+def endpoint_indexer(filename):
     """
     This attempts to create a template for all endpoints in a file, and relevant imports
     """
+    code_index = get_code_index()
+    # Now we are going to produce our documentation template:
+    code = code_index[filename]
 
-    code_index = {}
+    endpoint_indices = match_endpoint(code)
+    endpoint_imports = get_import_headers(code)
+
     summary = {}
-
+    possible_answers = ""
     with open("generated_summaries/summary.json","r") as file:
+
         summary = json.load(file)
-    with open("cache/code_cache.json","r") as file:
-        code_index = json.load(file)
+        possible_answers = summary[filename]["imports"]
+    
 
-    # get the file contents + imports for the given code file
-    code_imports = summary[code_name]["imports"]
-    import_desc = dict((path, summary[path]["description"]) for path in code_imports)
-    code_content = code_index["cached_index"][code_name]
+    # with open("")
 
-
-    endpoint_indexer_prompt = prompts["endpoint_indexer_prompt"]
-
-    complete_prompt = f"""
-    {endpoint_indexer_prompt} 
-    code content: {code_content}
-    """ 
-
-    capped_max = 4096 - num_tokens(complete_prompt)
-
-    endpoint_indexer_completion = openai.Completion.create(
-                        model="text-davinci-003",
-                        prompt = complete_prompt,
-                        temperature = 0,
-                        max_tokens = capped_max
-            ).choices[0].text
-
-    obj = json.loads(endpoint_indexer_completion)
+    prompt_header = """use the provided api endpoint and import 
+    statements to give the filepath for the data model that the endpoint
+    uses in its response, and return only the filepath as a string. Do not include 
+    any other text in your output. Your final output should be a single line 
+    with the filepath as the only content. This filepath should be selected
+    from one of the filepaths in the "possible answers" list. The output should contain
+    no newline characters
+    """
 
     with open("generated_templates/endpoint_template.json","w") as file:
-        json.dump(obj, file)
+        write_obj = []
+        for ep in endpoint_indices:
 
-    return
+            start,end = ep
+            code = "\n".join(code.split("\n")[start:end])
+            data_model_prompt = prompt_header + f"""
+            code: {code} 
+            file header: {endpoint_imports}
+            possible answers: {possible_answers}"""
 
+            data_model_completion = openai.Completion.create(
+                            model="text-davinci-003",
+                            prompt = data_model_prompt,
+                            temperature = 0,
+                            max_tokens = 12
+                ).choices[0].text
+
+            # clean up model output 
+            data_model_completion = data_model_completion.replace("\n","")
+            data_model_completion = data_model_completion.replace("'","")
+
+            ep_obj = {
+                "line_indices": {"start_index": start, "end_index": end}, 
+                "response_model": data_model_completion
+            }
+            write_obj.append(ep_obj)
+        
+        # ep_template = {"ep_index":write_obj}
+        # file.write(json.dumps(ep_template))
+
+    # obj = json.loads(endpoint_indexer_completion
+
+    return write_obj
 
 def prompt_classfication():
 

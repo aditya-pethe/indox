@@ -1,0 +1,30 @@
+{
+    "md_file": "facts.md",
+    "endpoints":[
+        {
+            "name": "/",
+            "line_indices": {"start_index": 9, "end_index": 16}, 
+            "response_model": "app/models/fact"
+        },
+        {
+            "name": "/me",
+            "line_indices": {"start_index": 19, "end_index": 36}, 
+            "response_model": "app/models/fact"
+        },
+        {
+            "name": "/random",
+            "line_indices": {"start_index": 39, "end_index": 54}, 
+            "response_model": "app/models/fact"
+        },
+        {
+            "name": "/:factID",
+            "line_indices": {"start_index": 57, "end_index": 69}, 
+            "response_model": "app/models/fact"
+        },
+        {
+            "name": "/",
+            "line_indices": {"start_index": 72, "end_index": 109}, 
+            "response_model": "app/models/fact"
+        }
+    ]
+}
