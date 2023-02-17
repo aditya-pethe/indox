@@ -1,17 +1,24 @@
 #Endpoint Documentation 
 
+});
 
 ## Google Contacts Endpoint
 
 ```
 GET /google/contacts
 ```
-
-Description: This endpoint is used to authenticate a user's Google contacts.
+Description: This endpoint is used to retrieve contacts from a user's Google account. 
 
 Query Parameters: None
 
-Example Response: A redirect to the Google authentication page.
+Example Response: 
+
+```
+{
+    accessToken: <encrypted access token>,
+    refreshToken: <refresh token>
+}
+```
 
 ## Google Contacts Callback Endpoint
 
@@ -19,77 +26,19 @@ Example Response: A redirect to the Google authentication page.
 GET /google/contacts/callback
 ```
 
-Description: This endpoint is used to handle the callback from the Google Contacts API. It is used to update the user's access token and refresh token in the database.
+Description: This endpoint is used to update the user's access token and refresh token after they have authenticated with Google Contacts.
 
 Query Parameters: 
-- `code`: The authorization code returned from the Google Contacts API.
-- `state`: The state of the request.
+- `code`: The authorization code returned from the Google Contacts authentication process.
+- `state`: The state of the application before the authentication process.
 
 Example Response:
 ```
 {
     "state": {
-        "redirectUrl": "http://localhost:3000/contacts"
+        "redirectUrl": "http://localhost:3000/dashboard"
     }
 }
-```
-
-Data Model:
-```
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const crypto = require('crypto');
-const mongooseDelete = require('mongoose-delete');
-
-const keys = require.main.require('./app/config/keys');
-const strings = require.main.require('./app/config/strings');
-
-// Make email and phone docs unique except for those that are flagged as deleted
-const uniquePartialIndex = {
-    unique: true,
-    partialFilterExpression: {
-        deleted: false
-    }
-};
-
-const UserSchema = new Schema({
-    name: {
-        first:  {type: String, required: true},
-        last:   {type: String, required: true}
-    },
-    email:      {type: String},
-    phone:      {type: String},
-    photo:      {type: String, default: strings.userPhotoUrl},
-    google: {
-        id:           {type: String},
-        accessToken:  {type: String},
-        refreshToken: {type: String}
-    },
-    isAdmin: {type: Boolean, default: false},
-    ip: String
-}, {
-    timestamps: true
-});
-
-UserSchema.statics.encryptAccessToken = function(plainText) {
-    return crypto
-        .createCipher(keys.encryption.algorithm, keys.encryption.key)
-        .update(plainText, 'utf-8', 'hex');
-};
-
-UserSchema.statics.decryptAccessToken = function(cipher) {
-    return crypto
-        .createDecipher(keys.encryption.algorithm, keys.encryption.key)
-        .update(cipher, 'hex', 'utf-8');
-};
-
-UserSchema.plugin(mongooseDelete, {overrideMethods: true});
-
-UserSchema.index({email: 1, phone: 1}, uniquePartialIndex);
-
-var User = mongoose.model('User', UserSchema);
-
-module.exports = User;
 ```
 
 ## Sign Out Endpoint
@@ -111,58 +60,54 @@ Status: 200
 ## Daily Endpoint
 
 ```
-GET /endpoint/path
+GET /daily
 ```
-Description: This endpoint is used to send facts to recipients who have subscribed to a certain animal type. 
+Description: This endpoint is used to retrieve a daily fact and the list of recipients for that fact. 
 
 Query Parameters: 
-- code: The code used to access the endpoint
+- code: The code used to access the endpoint. 
 
 Example Response: 
 ```
 {
     cat: {
-        recipients: [123456789],
-        fact: "Cats can sleep up to 20 hours a day!"
+        recipients: [123456789, 987654321],
+        fact: "Cats can make over 100 vocal sounds, while dogs can only make around 10."
     },
     dog: {
-        recipients: [987654321],
-        fact: "Dogs can hear sounds four times farther away than humans!"
+        recipients: [123456789, 987654321],
+        fact: "Dogs can smell up to 100,000 times better than humans."
     }
 }
 ```
 
-## Send Message Endpoint
+## Message Endpoint
 
 ```
 POST /message
 ```
-Description: This endpoint is used to send a message to a recipient. It will check if the recipient exists, and if not, create a new recipient. It will also check if the recipient has been deleted, and if so, restore them. 
+Description: This endpoint is used to send a message to a recipient. It will check if the recipient exists and if not, it will create a new recipient. It will also check if the recipient has been deleted and if so, it will restore the recipient. 
 
 Query Parameters: 
-- query: Text query provided
-- number: Phone number provided
+- query: text query
+- number: phone number
 
 Example Response: 
 ```
 {
-    response: {
-        text: "Welcome back!",
-        number: "1234567890",
-        type: "outgoing"
-    },
-    delay: 2,
-    number: "1234567890"
+    response: message,
+    delay: computeTypingDelay(message.text),
+    number: req.query.number
 }
 ```
 
 ## Get Data
 
 ```
-GET /endpoint/data
+GET /data
 ```
 
-Description: This endpoint is used to retrieve data from the Recipient, UnsubscribeDate, User, and Fact models.
+Description: This endpoint is used to retrieve data about recipients, unsubscribe dates, users, and override facts.
 
 Query Parameters: None
 
@@ -204,24 +149,26 @@ Example Response:
     overrideFacts: [
         {
             _id: "5f3f3f3f3f3f3f3f3f3f3f3f",
+            fact: "This is an override fact",
             sendDate: "2020-08-01T00:00:00.000Z"
         },
         ...
     ]
 }
 ```
+});
 
 ## Get Contacts
 
 ```
-GET /endpoint/path
+GET /path
 ```
-Description: This endpoint is used to get a list of contacts from a user's Google account.
+Description: This endpoint is used to get a list of contacts from a user's Google account. It also checks if the contacts have been added to the user's list of recipients and if they have subscribed to a particular animal type. 
 
 Query Parameters: 
-- `animal_type`: The type of animal the user is subscribed to.
+- animal_type: The type of animal the user is interested in.
 
-Example Response:
+Example Response: 
 ```
 [
     {
@@ -240,14 +187,14 @@ Example Response:
 ## Get Random Facts
 
 ```
-GET /endpoint/path
+GET /path
 ```
 Description: This endpoint returns a list of random facts from the database. 
 
 Query Parameters: 
 - amount: The number of facts to return (defaults to 1)
-- filter: An object containing filter parameters for the query
-- animalType: The type of animal to return facts about (defaults to 'cat')
+- filter: An object containing query parameters to filter the facts by
+- animalType: The type of animal the facts should be about (defaults to 'cat')
 
 Example Response: 
 ```
@@ -285,58 +232,65 @@ Example Response:
 ]
 ```
 
-## Get User Facts
+## Get Animal Facts
 
 ```
-GET /endpoint/me
+GET /me
 ```
 
-Description: This endpoint returns a list of facts associated with a user.
+Description: This endpoint returns a list of animal facts based on the animal type specified in the query parameter.
 
 Query Parameters: 
-- animal_type: A comma-separated list of animal types to filter the facts by.
+- animal_type: A comma-separated list of animal types.
 
-Example Response: 
+Example Response:
+
 ```
 [
     {
         "_id": "5f3f3f3f3f3f3f3f3f3f3f3f",
-        "text": "Cats can be right-pawed or left-pawed.",
+        "text": "Cats can jump up to six times their length.",
         "type": "cat",
         "user": {
             "_id": "5f3f3f3f3f3f3f3f3f3f3f3f",
             "name": "John Doe"
-        }
+        },
+        "createdAt": "2020-08-12T15:00:00.000Z",
+        "updatedAt": "2020-08-12T15:00:00.000Z",
+        "__v": 0
     },
     {
         "_id": "5f3f3f3f3f3f3f3f3f3f3f3f",
-        "text": "Dogs can learn up to 250 words.",
+        "text": "Dogs can smell up to 100,000 times better than humans.",
         "type": "dog",
         "user": {
             "_id": "5f3f3f3f3f3f3f3f3f3f3f3f",
             "name": "John Doe"
-        }
+        },
+        "createdAt": "2020-08-12T15:00:00.000Z",
+        "updatedAt": "2020-08-12T15:00:00.000Z",
+        "__v": 0
     }
 ]
 ```
 
-## Get Random Animal Fact
+## Get Random Fact
 
 ```
-GET /endpoint/random
+GET /random
 ```
 
-Description: This endpoint returns a random animal fact.
+Description: This endpoint returns a random fact from the database.
 
 Query Parameters: 
-- animal_type: A comma-separated list of animal types. Defaults to 'cat'.
-- amount: The number of facts to return. Limited to 500 at a time.
+- animal_type: A comma-separated list of animal types to filter the facts by.
+- amount: The number of facts to return. Limited to 500 facts at a time.
 
 Example Response: 
 ```
 {
     "user": "5f3f3f3f3f3f3f3f3f3f3f3f",
-    "text": "Cats can make over 100 vocal sounds, while dogs can only make around 10.",
+    "text": "Cats can make over 100 vocal sounds, while dogs can make around 10.",
     "sendDate": "2020-08-20T17:00:00.000Z",
     "type": "cat",
     "status": {
@@ -353,13 +307,15 @@ Example Response:
 ## Get Fact by ID
 
 ```
-GET /endpoint/path
+GET /:factID
 ```
-Description: This endpoint retrieves a fact from the database by its ID.
+
+Description: This endpoint is used to retrieve a single fact by its ID.
 
 Query Parameters: None
 
 Example Response: 
+
 ```
 {
     "_id": "5f3f3f3f3f3f3f3f3f3f3f3f",
@@ -367,16 +323,16 @@ Example Response:
         "name": "John Doe",
         "photo": "https://example.com/photo.jpg"
     },
-    "text": "Cats can sleep for up to 16 hours a day.",
-    "sendDate": "2020-08-01T00:00:00.000Z",
+    "text": "Did you know that cats can jump up to five times their own height?",
+    "sendDate": "2020-08-12T15:00:00.000Z",
     "type": "cat",
     "status": {
         "verified": true,
-        "feedback": "Approved",
-        "sentCount": 0
+        "feedback": "This fact is accurate",
+        "sentCount": 5
     },
-    "createdAt": "2020-08-01T00:00:00.000Z",
-    "updatedAt": "2020-08-01T00:00:00.000Z",
+    "createdAt": "2020-08-12T15:00:00.000Z",
+    "updatedAt": "2020-08-12T15:00:00.000Z",
     "__v": 0
 }
 ```
@@ -384,13 +340,13 @@ Example Response:
 ## Create Fact Endpoint
 
 ```
-POST /endpoint/path
+POST /
 ```
-Description: This endpoint is used to create a new fact. 
+Description: This endpoint allows a user to create a fact about an animal. 
 
 Query Parameters: 
 - factText: The text of the fact
-- animalType: The type of animal associated with the fact
+- animalType: The type of animal the fact is about
 
 Example Response: 
 ```
@@ -400,16 +356,16 @@ Example Response:
         "_id": "5f3f3f3f3f3f3f3f3f3f3f3f",
         "name": "John Doe"
     },
-    "text": "This is a fact about cats.",
+    "text": "This is a fact about an animal.",
     "type": "cat",
-    "sendDate": "2020-08-12T15:00:00.000Z",
+    "sendDate": "2020-08-12T17:30:00.000Z",
     "status": {
         "verified": null,
         "feedback": null,
         "sentCount": 0
     },
-    "createdAt": "2020-08-12T15:00:00.000Z",
-    "updatedAt": "2020-08-12T15:00:00.000Z",
+    "createdAt": "2020-08-12T17:30:00.000Z",
+    "updatedAt": "2020-08-12T17:30:00.000Z",
     "__v": 0
 }
 ```
@@ -417,13 +373,13 @@ Example Response:
 ## Get Recipients
 
 ```
-GET /endpoint/path
+GET /path
 ```
 
 Description: This endpoint is used to get a list of recipients.
 
 Query Parameters: 
-- animal_type: A comma-separated list of animal types to filter the recipients by.
+- animal_type: A comma-separated list of animal types.
 
 Example Response: 
 
@@ -433,7 +389,7 @@ Example Response:
         {
             "_id": "5f3f3f3f3f3f3f3f3f3f3f3f",
             "name": "John Doe",
-            "number": "+15555555555",
+            "number": "+123456789",
             "addedBy": {
                 "_id": "5f3f3f3f3f3f3f3f3f3f3f3f",
                 "name": "Jane Doe"
@@ -447,10 +403,10 @@ Example Response:
 ## Get Recipients
 
 ```
-GET /endpoint/me
+GET /me
 ```
 
-Description: This endpoint returns a list of recipients based on the user's query parameters.
+Description: This endpoint is used to get a list of recipients based on the user's query parameters.
 
 Query Parameters: 
 - animal_type: A comma-separated list of animal types.
@@ -474,7 +430,7 @@ Example Response:
 ## Add Recipients
 
 ```
-POST /endpoint/path
+POST /
 ```
 
 Description: This endpoint adds recipients to the user's account.
@@ -516,8 +472,7 @@ Description: This endpoint deletes a recipient from the database.
 Query Parameters: 
 - `verificationCode`: A unique code used to verify the recipient.
 
-Example Response:
-
+Example Response: 
 ```
 {
     message: "Successfully unsubscribed (123) 456-7890"
@@ -527,7 +482,7 @@ Example Response:
 ## Delete Recipient
 
 ```
-DELETE /endpoint/path
+DELETE /
 ```
 
 Description: This endpoint deletes a recipient from the database. 
@@ -546,7 +501,7 @@ Example Response:
 ## Get Conversation
 
 ```
-GET /endpoint/path
+GET /:number/conversation
 ```
 
 Description: This endpoint is used to get a conversation between a user and a recipient.
@@ -557,44 +512,38 @@ Example Response:
 
 ```
 {
-    "_id": "5f3f3f3f3f3f3f3f3f3f3f3f",
-    "number": "1234567890",
-    "messages": [
-        {
-            "_id": "5f3f3f3f3f3f3f3f3f3f3f3f",
-            "sender": "user",
-            "recipient": "recipient",
-            "message": "Hello, how are you?"
-        },
-        {
-            "_id": "5f3f3f3f3f3f3f3f3f3f3f3f",
-            "sender": "recipient",
-            "recipient": "user",
-            "message": "I'm doing well, thank you!"
-        }
-    ]
+    "message": "You aren't facting this person"
 }
 ```
+    });
 
-## Get User Information
+    data model: 
+    {
+        id: String,
+        name: String,
+        email: String
+    }
+
+## /me
 
 ```
 GET /me
 ```
 
-Description: This endpoint is used to retrieve the user information of the currently authenticated user.
+Description: This endpoint returns the user's information.
 
 Query Parameters: None
 
-Example Response:
+Example Response: 
 
 ```
 {
-    "id": 1,
-    "name": "John Doe",
-    "email": "johndoe@example.com"
+    id: "12345",
+    name: "John Doe",
+    email: "johndoe@example.com"
 }
 ```
+    });
 
 ## Delete User Account
 
@@ -614,19 +563,22 @@ Example Response:
     "message": "Account deleted"
 }
 ```
+});
 
-## Generate Verification Code
+## Create Verification Code
 
 ```
 POST /me/profile/phone/verification-code
 ```
 
-Description: This endpoint is used to generate a verification code for a user's phone number.
+Description: This endpoint creates a verification code for a user's phone number.
 
-Query Parameters: None
+Query Parameters: 
+- user: The user's ID
+- type: The type of verification code (in this case, 'phone')
+- data: The user's phone number
 
-Example Response:
-
+Example Response: 
 ```
 {
     message: "Created verification code",
@@ -635,17 +587,18 @@ Example Response:
     data: <phone_number>
 }
 ```
+});
 
-## Update User Phone Endpoint
+## Update Phone Number Endpoint
 
 ```
 PUT /me/profile/phone
 ```
 
-Description: This endpoint updates the phone number of the user in the database.
+Description: This endpoint updates the phone number associated with the user's profile.
 
 Query Parameters: 
-- `verificationCode`: The verification code sent to the user's phone number.
+- `verificationCode`: The verification code associated with the user's phone number.
 
 Example Response:
 
@@ -658,12 +611,12 @@ Example Response:
 }
 ```
 
-## Process Webhook
+## processWebhook
 
 ```
-POST /endpoint/path
+POST /
 ```
-Description: This endpoint is used to process webhooks.
+Description: This endpoint processes a webhook and returns a response.
 
 Query Parameters: None
 

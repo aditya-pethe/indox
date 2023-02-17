@@ -9,6 +9,11 @@ import sys
 import json
 import logging
 import coloredlogs
+from dotenv import load_dotenv
+load_dotenv()
+
+MY_AUTH = (os.getenv("GITHUB_USER"), os.getenv("GITHUB_PAT"))
+
 
 
 logging.basicConfig(
@@ -20,11 +25,6 @@ logging.basicConfig(
 logger = logging.getLogger()
 coloredlogs.install(level='DEBUG', logger=logger)
 
-
-from dotenv import load_dotenv
-load_dotenv()
-
-MY_AUTH = (os.getenv("GITHUB_USER"), os.getenv("GITHUB_PAT"))
 
 def parse_url(repo_url, paths = ["app/models","app/routes"]):
     """

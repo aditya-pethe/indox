@@ -16,8 +16,11 @@ def load_prompts():
 
     return prompts
 
-
 def num_tokens(data):
+
+    """
+    count tokens in string / list for gpt3
+    """
 
     def num_tokens_from_string(string, encoding_name = "gpt2"):
 
@@ -60,10 +63,3 @@ def parse_summary():
         json.dump(summary, file)
     
     return
-# summary = {}
-# n = 0
-
-# with open("generated_summaries/summary.json","r") as file:
-#     summary = json.load(file)
-#     n = num_tokens(str(summary)) 
-#     print(f"summary is {n} tokens")

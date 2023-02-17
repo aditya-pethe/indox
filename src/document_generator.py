@@ -1,9 +1,6 @@
 # generate documentation given 1) the populated json template of documentation and 2) the code file index
 
 from webbrowser import get
-import requests
-import base64
-import urllib
 import openai 
 import pandas as pd
 from urllib.parse import urlparse
@@ -12,6 +9,8 @@ from dotenv import load_dotenv
 from code_indexer import get_code_index
 from utils import load_prompts
 import json
+
+load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 prompts = load_prompts()
@@ -25,7 +24,8 @@ def write_endpoint_doc(endpoint):
     code_index = {}
     with open("cache/code_cache.json","r") as file:
         code_index = json.load(file)["cached_index"]
-
+    
+    # extract fields from endpoint object
     endpoint_filename = endpoint["code_name"]
     endpoint_code = code_index[endpoint_filename]
     endpoint_index = endpoint["endpoint_index"]
@@ -39,11 +39,12 @@ def write_endpoint_doc(endpoint):
     ## Name of Endpoint
 
     ```
-    GET /endpoint/path
+    GET /[insert path here]
     ```
     Description:
 
     Query Parameters: 
+    - `param`: description
 
     Example Response:
 
@@ -53,18 +54,20 @@ def write_endpoint_doc(endpoint):
 
     for index in endpoint_index:
 
+        # get file indices containing endpoint code, and read file
         start = index["line_indices"]["start_index"]
         end = index["line_indices"]["end_index"]
 
         code = "\n".join(endpoint_code.split("\n")[start:end])
         
+        # handling for endpoint index info [code, data model] - only add data model if present in the codebase
         if index["response_model"] in code_index:
             model = code_index[index["response_model"]]
+            index_info = f"endpoint: {code} data model: {model}"
         else:
-            model = "no model given"
+            index_info = f"endpoint: {code}"
 
-        index_info = f"endpoint: {code} data model: {model}"
-
+        # prompt to generate completion
         generate_prompt = ep_prompt + index_info
         endpoint_completion = openai.Completion.create(
                     model="text-davinci-003",
@@ -77,22 +80,11 @@ def write_endpoint_doc(endpoint):
 
     return endpoint_doc
 
-def generate_docs():
+def generate_endpoint_docs():
 
     """
-    Generate documentation for all endpoints in the code index
+    Generate endpoint documentation for all endpoints in the code index
     """
-
-    # # generate the intro for the endpoints.md file
-    # endpoint_header_prompt = f"""Write short intro for an endpoints.md file, supporting a cat facts api which provides daily cat facts"""
-    # endpoint_header_completion = openai.Completion.create(
-    #                 model="text-davinci-003",
-    #                 prompt = endpoint_header_prompt,
-    #                 temperature = 0,
-    #                 max_tokens = 2048
-    #     )
-
-    # intro_md = "# Endpoints \n" + endpoint_header_completion.choices[0].text
 
     template = {}
     endpoint_md_header = "#Endpoint Documentation \n"
@@ -115,7 +107,7 @@ template = {}
 with open("generated_templates/cat_doc_template.json", "r") as file:
         template = json.load(file)
 
-test_endpoint = template["docs"]["endpoints"][4]
+test_endpoint = template["docs"]["endpoints"][0]
     
 endpoint_doc = write_endpoint_doc(test_endpoint)
 with open("generated_docs/endpoint_docs.md","w") as md:

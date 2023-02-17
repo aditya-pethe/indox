@@ -1,7 +1,4 @@
 from webbrowser import get
-import requests
-import base64
-import urllib
 import openai 
 import pandas as pd
 from urllib.parse import urlparse
@@ -9,14 +6,12 @@ import os
 from dotenv import load_dotenv 
 from utils import num_tokens, load_prompts
 import json
-
-
 from code_indexer import get_code_index
 from utils import load_prompts
+load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 prompts = load_prompts()
-
 
 def summarize_code_index(code_index):
 

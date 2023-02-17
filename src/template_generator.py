@@ -4,9 +4,6 @@
 
 from importlib.resources import read_binary
 from webbrowser import get
-import requests
-import base64
-import urllib
 import openai 
 import pandas as pd
 from urllib.parse import urlparse
@@ -15,8 +12,8 @@ from dotenv import load_dotenv
 from code_indexer import get_code_index
 from utils import load_prompts, num_tokens
 from endpoint_parser import match_endpoint, get_import_headers
-
 import json
+load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 prompts = load_prompts()
@@ -25,7 +22,8 @@ prompts = load_prompts()
 def write_template(write_obj, doc_template_path = "doc_templates/api_template.json", name = "cat_doc_template"):
 
     """
-    Given a write_obj with models and endpoints, this function will write the template to a json file
+    Given a write_obj with models and endpoints, this function will
+    fill out the generated template file, and be ready for generation
     """
 
     with open(doc_template_path, "r") as file:
@@ -33,7 +31,7 @@ def write_template(write_obj, doc_template_path = "doc_templates/api_template.js
     
     template["docs"]["models"] = write_obj["models"]
 
-    # begin endpoint indexing
+    # index each endpoint, given the file name
     for i,endpoint in enumerate(write_obj["endpoints"]):
         filename = endpoint["code_name"]
         endpoint_index = endpoint_indexer(filename)
@@ -46,38 +44,13 @@ def write_template(write_obj, doc_template_path = "doc_templates/api_template.js
 
     return 
 
-def rule_based_classification(code_index):
-
-    """
-    A simple rule-based classification function that uses filenames to classify the code
-    """
-
-    write_object = {
-            "models":[],
-            "endpoints":[]
-        }
-
-    for filepath in code_index:
-
-        path_list = filepath.split("/")
-
-        if "route" in filepath or "endpoint" in filepath:
-            write_object["endpoints"].append({
-                "markdown_name" : f"{path_list[-1]}.md",
-                "code_name": f"{filepath}"
-            })
-
-        elif "model" in filepath:
-            write_object["models"].append({
-                "markdown_name" : f"{path_list[-1]}.md",
-                "code_name": f"{filepath}"
-            })
-
-    return write_object
-
 def endpoint_indexer(filename):
     """
-    This attempts to create a template for all endpoints in a file, and relevant imports
+    This will add important data to the generated template that allows endpoint documentation
+    
+    "line_indices": {"start_index": start, "end_index": end}, // where the code is in the file
+    "response_model": data_model_completion // the filepath of the data model
+
     """
     code_index = get_code_index()
     # Now we are going to produce our documentation template:
@@ -93,9 +66,6 @@ def endpoint_indexer(filename):
         summary = json.load(file)
         possible_answers = summary[filename]["imports"]
     
-
-    # with open("")
-
     prompt_header = """use the provided api endpoint and import 
     statements to give the filepath for the data model that the endpoint
     uses in its response, and return only the filepath as a string. Do not include 
@@ -143,8 +113,8 @@ def endpoint_indexer(filename):
 def prompt_classfication():
 
     """
-    input: template generation prompt + api doc template + file summary dict
-    output: a populated template, with file names in approriate positions in doc structure
+    Given the summary dictionary, this attempts to classify all the files into 
+    the generation template using the completion endpoint
     """
 
     template_generation_prompt = prompts["template_generation_prompt"]
@@ -176,10 +146,46 @@ def prompt_classfication():
 
     return
 
+def rule_based_classification(code_index):
+
+    """
+    A simple rule-based classification that classifies files into
+    endpoints or models, using keyword / name matching
+    """
+
+    write_object = {
+            "models":[],
+            "endpoints":[]
+        }
+
+    for filepath in code_index:
+
+        path_list = filepath.split("/")
+
+        if "route" in filepath or "endpoint" in filepath:
+            write_object["endpoints"].append({
+                "markdown_name" : f"{path_list[-1]}.md",
+                "code_name": f"{filepath}"
+            })
+
+        elif "model" in filepath:
+            write_object["models"].append({
+                "markdown_name" : f"{path_list[-1]}.md",
+                "code_name": f"{filepath}"
+            })
+
+    return write_object
+
 def embedding_classification(code_data, target_folders):
     return
 
 def generate_template(code_index, classification):
+
+    """
+    Given a function to classify the files into categories [endpoint/model]
+    generate the documentation template
+    """
+
     write_object = classification(code_index)
     write_template(write_object)
     return
